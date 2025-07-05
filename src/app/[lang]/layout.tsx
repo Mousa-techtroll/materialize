@@ -1,5 +1,8 @@
+'use client'
+
 // Next Imports
-import { headers } from 'next/headers'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
@@ -8,7 +11,7 @@ import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // Type Imports
-import type { ChildrenType } from '@core/types'
+import type { ChildrenType, SystemMode } from '@core/types'
 import type { Locale } from '@configs/i18n'
 
 // Component Imports
@@ -20,7 +23,7 @@ import TranslationWrapper from '@/hocs/TranslationWrapper'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getSystemMode } from '@core/utils/serverHelpers'
+import { getSystemModeBrowser } from '@/utils/browserHelpers'
 
 // Style Imports
 import '@/app/globals.css'
@@ -33,18 +36,20 @@ export const metadata = {
   description: 'Materialize - Material Next.js Admin Template'
 }
 
-const RootLayout = async (props: ChildrenType & { params: Promise<{ lang: Locale }> }) => {
-  const params = await props.params
-
+const RootLayout = (props: ChildrenType) => {
   const { children } = props
+  const params = useParams<{ lang: Locale }>()
 
-  // Vars
-  const headersList = await headers()
-  const systemMode = await getSystemMode()
+  const [systemMode, setSystemMode] = useState<SystemMode>('light')
+
+  useEffect(() => {
+    setSystemMode(getSystemModeBrowser())
+  }, [])
+
   const direction = i18n.langDirection[params.lang]
 
   return (
-    <TranslationWrapper headersList={headersList} lang={params.lang}>
+    <TranslationWrapper lang={params.lang}>
       <html id='__next' lang={params.lang} dir={direction} suppressHydrationWarning>
         <body className='flex is-full min-bs-full flex-auto flex-col'>
           <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
