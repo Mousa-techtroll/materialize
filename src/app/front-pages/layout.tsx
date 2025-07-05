@@ -1,3 +1,5 @@
+'use client'
+
 // MUI Imports
 import Button from '@mui/material/Button'
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
@@ -6,7 +8,7 @@ import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // Type Imports
-import type { ChildrenType } from '@core/types'
+import type { ChildrenType, SystemMode } from '@core/types'
 
 // Context Imports
 import { IntersectionProvider } from '@/contexts/intersectionContext'
@@ -18,7 +20,8 @@ import FrontLayout from '@components/layout/front-pages'
 import ScrollToTop from '@core/components/scroll-to-top'
 
 // Util Imports
-import { getSystemMode } from '@core/utils/serverHelpers'
+import { useEffect, useState } from 'react'
+import { getSystemModeBrowser } from '@/utils/browserHelpers'
 
 // Style Imports
 import '@/app/globals.css'
@@ -31,9 +34,12 @@ export const metadata = {
   description: 'Materialize - Material Next.js Admin Template'
 }
 
-const Layout = async ({ children }: ChildrenType) => {
-  // Vars
-  const systemMode = await getSystemMode()
+const Layout = ({ children }: ChildrenType) => {
+  const [systemMode, setSystemMode] = useState<SystemMode>('light')
+
+  useEffect(() => {
+    setSystemMode(getSystemModeBrowser())
+  }, [])
 
   return (
     <html id='__next' suppressHydrationWarning>

@@ -1,5 +1,10 @@
+'use client'
+
+// React Imports
+import { useEffect, useState } from 'react'
+
 // Type Imports
-import type { ChildrenType, Direction } from '@core/types'
+import type { ChildrenType, Direction, Mode, SystemMode } from '@core/types'
 
 // Context Imports
 import { NextAuthProvider } from '@/contexts/nextAuthProvider'
@@ -12,20 +17,28 @@ import ReduxProvider from '@/redux-store/ReduxProvider'
 import AppReactToastify from '@/libs/styles/AppReactToastify'
 
 // Util Imports
-import { getMode, getSettingsFromCookie, getSystemMode } from '@core/utils/serverHelpers'
+import {
+  getModeBrowser,
+  getSettingsFromCookieBrowser,
+  getSystemModeBrowser
+} from '@/utils/browserHelpers'
 
 type Props = ChildrenType & {
   direction: Direction
 }
 
-const Providers = async (props: Props) => {
-  // Props
+const Providers = (props: Props) => {
   const { children, direction } = props
 
-  // Vars
-  const mode = await getMode()
-  const settingsCookie = await getSettingsFromCookie()
-  const systemMode = await getSystemMode()
+  const [mode, setMode] = useState<Mode>('light')
+  const [systemMode, setSystemMode] = useState<SystemMode>('light')
+  const [settingsCookie, setSettingsCookie] = useState<any>(null)
+
+  useEffect(() => {
+    setMode(getModeBrowser())
+    setSystemMode(getSystemModeBrowser())
+    setSettingsCookie(getSettingsFromCookieBrowser())
+  }, [])
 
   return (
     <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}>

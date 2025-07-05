@@ -1,8 +1,13 @@
+"use client"
+
 // MUI Imports
 import Button from '@mui/material/Button'
 
 // Type Imports
-import type { ChildrenType } from '@core/types'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+
+import type { ChildrenType, Mode, SystemMode } from '@core/types'
 import type { Locale } from '@configs/i18n'
 
 // Layout Imports
@@ -25,19 +30,25 @@ import AuthGuard from '@/hocs/AuthGuard'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getDictionary } from '@/utils/getDictionary'
-import { getMode, getSystemMode } from '@core/utils/serverHelpers'
+import { getDictionaryBrowser, getModeBrowser, getSystemModeBrowser } from '@/utils/browserHelpers'
 
-const Layout = async (props: ChildrenType & { params: Promise<{ lang: Locale }> }) => {
-  const params = await props.params
-
+const Layout = (props: ChildrenType) => {
   const { children } = props
+  const params = useParams<{ lang: Locale }>()
 
-  // Vars
+  const [dictionary, setDictionary] = useState<any>()
+  const [mode, setMode] = useState<Mode>('light')
+  const [systemMode, setSystemMode] = useState<SystemMode>('light')
+
+  useEffect(() => {
+    getDictionaryBrowser(params.lang as Locale).then(setDictionary)
+    setMode(getModeBrowser())
+    setSystemMode(getSystemModeBrowser())
+  }, [params.lang])
+
   const direction = i18n.langDirection[params.lang]
-  const dictionary = await getDictionary(params.lang)
-  const mode = await getMode()
-  const systemMode = await getSystemMode()
+
+  if (!dictionary) return null
 
   return (
     <Providers direction={direction}>
