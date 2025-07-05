@@ -1,63 +1,15 @@
-'use client'
+import type { Metadata } from 'next'
+import type { ChildrenType } from '@core/types'
 
-// Next Imports
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import RootLayoutClient from './RootLayoutClient'
 
-// MUI Imports
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
-
-// Third-party Imports
-import 'react-perfect-scrollbar/dist/css/styles.css'
-
-// Type Imports
-import type { ChildrenType, SystemMode } from '@core/types'
-import type { Locale } from '@configs/i18n'
-
-// Component Imports
-
-// HOC Imports
-import TranslationWrapper from '@/hocs/TranslationWrapper'
-
-// Config Imports
-import { i18n } from '@configs/i18n'
-
-// Util Imports
-import { getSystemModeBrowser } from '@/utils/browserHelpers'
-
-// Style Imports
-import '@/app/globals.css'
-
-// Generated Icon CSS Imports
-import '@assets/iconify-icons/generated-icons.css'
-
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Materialize - Material Next.js Admin Template',
   description: 'Materialize - Material Next.js Admin Template'
 }
 
-const RootLayout = (props: ChildrenType) => {
-  const { children } = props
-  const params = useParams<{ lang: Locale }>()
-
-  const [systemMode, setSystemMode] = useState<SystemMode>('light')
-
-  useEffect(() => {
-    setSystemMode(getSystemModeBrowser())
-  }, [])
-
-  const direction = i18n.langDirection[params.lang]
-
-  return (
-    <TranslationWrapper lang={params.lang}>
-      <html id='__next' lang={params.lang} dir={direction} suppressHydrationWarning>
-        <body className='flex is-full min-bs-full flex-auto flex-col'>
-          <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
-          {children}
-        </body>
-      </html>
-    </TranslationWrapper>
-  )
+const Layout = (props: ChildrenType) => {
+  return <RootLayoutClient {...props} />
 }
 
-export default RootLayout
+export default Layout

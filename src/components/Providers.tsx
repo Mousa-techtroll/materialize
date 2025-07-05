@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // Type Imports
 import type { ChildrenType, Direction, Mode, SystemMode } from '@core/types'
@@ -30,15 +30,9 @@ type Props = ChildrenType & {
 const Providers = (props: Props) => {
   const { children, direction } = props
 
-  const [mode, setMode] = useState<Mode>('light')
-  const [systemMode, setSystemMode] = useState<SystemMode>('light')
-  const [settingsCookie, setSettingsCookie] = useState<any>(null)
-
-  useEffect(() => {
-    setMode(getModeBrowser())
-    setSystemMode(getSystemModeBrowser())
-    setSettingsCookie(getSettingsFromCookieBrowser())
-  }, [])
+  const [mode] = useState<Mode>(() => getModeBrowser())
+  const [systemMode] = useState<SystemMode>(() => getSystemModeBrowser())
+  const [settingsCookie] = useState<any>(() => getSettingsFromCookieBrowser())
 
   return (
     <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}>
